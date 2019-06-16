@@ -89,7 +89,7 @@ namespace CRViewer
             DrawImage(true);
         }
 
-        private void DrawImage(bool invalidate = false)
+        private void DrawImage(bool clear = false)
         {
             if (CurrentImage != null)
             {
@@ -103,8 +103,9 @@ namespace CRViewer
                         matrix = CurrentOrientation.Matrix;
                         offset = CurrentOrientation.CalculateOffset(offset, CurrentImage.Width, CurrentImage.Height);
                     }
-                    if (invalidate)
-                        this.Invalidate();
+
+                    if (clear)
+                        g.Clear(BackColor);
 
                     g.MultiplyTransform(matrix);
                     g.DrawImage(CurrentImage, offset);
