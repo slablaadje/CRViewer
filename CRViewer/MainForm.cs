@@ -97,36 +97,16 @@ namespace CRViewer
                 using (var g = this.CreateGraphics())
                 {
                     Matrix matrix = new Matrix();
+                    Point offset = new Point(0, 40);
                     if (CurrentOrientation != null)
                     {
-                        if (CurrentOrientation.FlipDiagonal)
-                            matrix.Multiply(new Matrix(0, 1, 1, 0, 0, 0), MatrixOrder.Append);
-                        if (CurrentOrientation.Rotate180)
-                            matrix.Multiply(new Matrix(-1, 0, 0, -1, 0, 0), MatrixOrder.Append);
-                        if (CurrentOrientation.FlipHorizontal)
-                            matrix.Multiply(new Matrix(-1, 0, 0, 1, 0, 0), MatrixOrder.Append);
-                    };
-
-                    Point[] points = new Point[] {
-                    new Point(0,0),
-                    new Point(0, CurrentImage.Height),
-                    new Point(CurrentImage.Width, 0),
-                    new Point(CurrentImage.Width, CurrentImage.Height)};
-                    matrix.TransformPoints(points);
-                    Point min = new Point(points.Min(p => p.X), points.Min(p => p.Y));
-                    points = new Point[] { min };
-                    matrix.TransformPoints(points);
-                    min = points[0];
-                    Matrix inverted = matrix.Clone();
-                    inverted.Invert();
-                    points = new Point[] { new Point(0, 40) };
-                    inverted.TransformPoints(points);
-
-                    g.MultiplyTransform(matrix);
-                    Point offset = new Point(min.X + points[0].X, min.Y + points[0].Y);
-
+                        matrix = CurrentOrientation.Matrix;
+                        offset = CurrentOrientation.CalculateOffset(offset, CurrentImage.Width, CurrentImage.Height);
+                    }
                     if (invalidate)
                         this.Invalidate();
+
+                    g.MultiplyTransform(matrix);
                     g.DrawImage(CurrentImage, offset);
 
                     g.ResetTransform();
