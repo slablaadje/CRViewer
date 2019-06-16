@@ -114,10 +114,16 @@ namespace CRViewer
                     new Point(CurrentImage.Width, CurrentImage.Height)};
                     matrix.TransformPoints(points);
                     Point min = new Point(points.Min(p => p.X), points.Min(p => p.Y));
-                    points = new Point[] { min, new Point(0, 40) };
+                    points = new Point[] { min };
                     matrix.TransformPoints(points);
+                    min = points[0];
+                    Matrix inverted = matrix.Clone();
+                    inverted.Invert();
+                    points = new Point[] { new Point(0, 40) };
+                    inverted.TransformPoints(points);
+
                     g.MultiplyTransform(matrix);
-                    Point offset = new Point(points[0].X - points[1].X, points[0].Y - points[1].Y);
+                    Point offset = new Point(min.X + points[0].X, min.Y + points[0].Y);
 
                     if (invalidate)
                         this.Invalidate();
