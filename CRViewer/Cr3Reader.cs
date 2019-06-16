@@ -20,14 +20,12 @@ namespace CRViewer
             Reader.BaseStream.Seek(0x12C, SeekOrigin.Begin); //magic!
             uint count = Reader.ReadUInt32();
             int dunno = Reader.ReadUInt16();
-            Console.WriteLine($"Found {count} tags");
             for (int i = 0; i < count; i++)
             {
                 uint tagId = Reader.ReadUInt16();
                 uint type = Reader.ReadUInt16();
                 uint c = Reader.ReadUInt32();
                 uint d = Reader.ReadUInt32();
-                Console.WriteLine($"Tag {tagId:04x}");
                 if(tagId == 0x0112)
                 {
                     return new Orientation((int)d);
@@ -51,7 +49,6 @@ namespace CRViewer
             }
             catch(Exception e)
             {
-                Console.WriteLine(e);
                 return null;
             }
         }
