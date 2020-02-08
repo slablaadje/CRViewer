@@ -98,18 +98,38 @@ namespace CRViewer
                 {
                     Matrix matrix = new Matrix();
                     Point offset = new Point(0, 40);
+
+                    var formWidth = (CurrentOrientation != null && CurrentOrientation.FlipDiagonal ? this.Size.Height - offset.Y : this.Size.Width - offset.X);
+                    var formHeight = (CurrentOrientation != null && CurrentOrientation.FlipDiagonal ? this.Size.Width - offset.X : this.Size.Height - offset.Y);
+
+                    var imageHeight = CurrentImage.Height;
+                    var imageWidth = CurrentImage.Width;
+
+                    if (imageHeight > formHeight)
+                    {
+                        imageWidth *= formHeight;
+                        imageWidth /= imageHeight;
+                        imageHeight = formHeight;
+                    }
+
+                    if (imageWidth > formWidth)
+                    {
+                        imageHeight *= formWidth;
+                        imageHeight /= imageWidth;
+                        imageWidth = formWidth;
+                    }
+
                     if (CurrentOrientation != null)
                     {
                         matrix = CurrentOrientation.Matrix;
-                        offset = CurrentOrientation.CalculateOffset(offset, CurrentImage.Width, CurrentImage.Height);
+                        offset = CurrentOrientation.CalculateOffset(offset, imageWidth, imageHeight);
                     }
 
                     if (clear)
                         g.Clear(BackColor);
 
                     g.MultiplyTransform(matrix);
-                    g.DrawImage(CurrentImage, offset);
-
+                    g.DrawImage(CurrentImage, offset.X, offset.Y, imageWidth, imageHeight);
                     g.ResetTransform();
                 }
             }
